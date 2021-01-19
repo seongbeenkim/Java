@@ -238,10 +238,16 @@ __개인적으로 공부하면서 작성한 것이기 때문에 틀리거나 표
       ```
     - __`anyMatch()`__   
       - __Stream의 요소 중 하나라도 조건을 만족하는 요소가 있다면 true, 없다면 false를 반환합니다.__   
+      - __Stream이 비어있다면 false를 반환합니다.__   
       ```Java   
       boolean anyMatch = names.stream()
         .anyMatch(name -> name.contains("a"));   
       // true
+      
+      List<String> names = new ArrayList<>();
+      boolean anyMatch = names.stream()
+        .anyMatch(name -> name.contains("a"));   
+      // false
       ```   
       
     - __`allMatch()`__   
@@ -251,6 +257,27 @@ __개인적으로 공부하면서 작성한 것이기 때문에 틀리거나 표
         .allMatch(name -> name.length() > 3);   
       // true
       ```   
+      - __하지만, Stream이 비어있을 경우 주의해야합니다.__   
+      ```Java   
+      List<String> names = new ArrayList<>();
+      boolean allMatch = names.stream()
+        .allMatch(name -> name.length() > 3);   
+      // true!!
+      ```   
+        - __위와 같은 경우 `false`가 아닌 `true`를 반환한다. 이러한 결과가 나오는 이유는 `Vacuous Truth` 때문입니다.__   
+        - __Vacuous Truth__   
+          - 가정이 모순이라면 주장이 무엇이든 상관없이 명제가 참이 되는 것을 의미합니다.   
+          - 즉, p -> q 라는 명제가 있을 경우, p가 거짓이면 q는 참이 된다.   
+            - ex) 명제 : 내가 가진 모든 전자기기는 애플사 제품이다.   
+              - 내가 가진 전자기기가 애플사 제품이면? p -> q : T
+              - 내가 가진 전저기기가 애플사 제품이 아니면? p -> q : F   
+              - __내가 가진 전자기기가 없다면? 애플사 제품이든 아니든 상관이 없게 된다.__   
+              - 그러므로 뒤의 조건이 참인지 거짓인지 판별하는 것은 의미가 없다. -> 이러한 경우에 있어서 진리값을 참이라고 정의하여 Vacuous Truth라고 불린다.     
+          - 그렇기 때문에, Stream이 비어있다면, 뒤에 어느 Predicate가 오더라도 true라는 값을 반환하게 됩니다.   
+            - [Oracle java docs](https://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html#allMatch-java.util.function.Predicate-)
+        - 그렇기 때문에 Stream이 비어있는 경우 false로 처리하고 싶다면 if문으로 비어있는지 확인하는 코드를 작성하는 것이 좋습니다.   
+        - [Why does Stream.allMatch() return true for an empty stream?](https://stackoverflow.com/questions/30223079/why-does-stream-allmatch-return-true-for-an-empty-stream/30223427#30223427)
+     
       
     - __`noneMatch()`__   
       - __Stream의 모든 요소가 조건을 만족하지 않으면 true, 만족한다면 false를 반환합니다.__   
@@ -259,6 +286,14 @@ __개인적으로 공부하면서 작성한 것이기 때문에 틀리거나 표
         .noneMatch(name -> name.endsWith("s"));   
       // true
       ```   
+      - __선택된 요소가 null일 경우에는 `NullPointerException`을 일으킵니다.__   
+      - __`allMatch()`와 마찬가지로 Stream이 비어있을 경우 Vacuous Truth로 인하여 `true`를 반환하게 됩니다.__   
+      ```Java   
+      List<String> names = new ArrayList<>();
+      boolean noneMatch = names.stream()
+        .noneMatch(name -> name.length() > 3);   
+      // true 
+      // empty Stream일 경우 noneMatch() == allMatch()   
     
   - __Iterating__   
     - __`forEach()`__   
