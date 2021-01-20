@@ -239,6 +239,8 @@ __개인적으로 공부하면서 작성한 것이기 때문에 틀리거나 표
     - __`anyMatch()`__   
       - __Stream의 요소 중 하나라도 조건을 만족하는 요소가 있다면 true, 없다면 false를 반환합니다.__   
       - __Stream이 비어있다면 false를 반환합니다.__   
+        - __anyMatch()에는 Vacuous Truth가 적용되지 않습니다.__   
+          - Vacuous Truth의 명제에는 모든 이라는 개념이 포함되기 때문에 하나의 요소를 찾는 anyMatch()에 적용되지 않습니다.   
       ```Java   
       boolean anyMatch = names.stream()
         .anyMatch(name -> name.contains("a"));   
